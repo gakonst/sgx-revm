@@ -1,22 +1,23 @@
 # SGX - REVM
 
-**PoC illustrating usage of the Fortanix SGX platform for executing
+**PoC illustrating usage of the [Fortanix SGX platform](https://edp.fortanix.com/docs/) for executing
 an EVM message confidentially without leaking any compute or access
 information.**
 
 ## How it works
 
-1. SGX-enabled server opens up a TCP Socket with TLS Enabled (assumes some kind of Certificate is already generated).
-2. User submits a TLS-encrypted payload to the server
-3. The Server proceeds to parse the payload into an EVM message and execute it.
+1. SGX-enabled server opens up a TCP Socket with TLS Enabled (assumes some kind of Certificate is already generated, see first line in main.rs - ideally there's a productionized way to do Certificate provisioning).
+2. User submits a TLS-encrypted payload to the server, ensuring the user and the server only have access to the information being delivered (the server actually doesn't because the socket is opened within the SGX enclave).
+3. The Server proceeds to parse the payload into an EVM message and execute it _confidentially_.
 
 The EVM database is expected to be instantiated as _empty_, and the user is expected to provide a payload which contains all the storage slots & values required by their transaction, _including Merkle Patricia Proofs_ for proving that these transactions are part of the actual state. It assumes that there is also a state root available to check against.
 
 ## TODO
 
 1. Make the demo unit-testable for CI usage
-2. Enable TLS payload decryption on the server (currently we just submit plaintext payloads to make prototype testing with netcat easier)
-3. [Remote Attestation](https://edp.fortanix.com/docs/)
+1. Enable TLS payload decryption on the server (currently we just submit plaintext payloads to make prototype testing with netcat easier)
+1. Extend the user-submitted payload to multiple transactions including merkle patricia proof verification for each access. This is kind of like a stateless node / light-client.
+1. [Remote Attestation](https://edp.fortanix.com/docs/examples/attestation/)
 
 ## How to replicate the results
 
@@ -57,6 +58,7 @@ sudo apt-get install intel-sgx-dkms sgx-aesm-service libsgx-aesm-launch-plugin
 
 # Check your SGX setup, all should be green except the `libsgx_enclave_common` maybe.
 sgx-detect
+```
 
 ### Running the demo
 
