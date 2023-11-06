@@ -30,7 +30,7 @@ Providing a quick-start below:
 ```bash
 # From: https://edp.fortanix.com/docs/installation/guide/
 # Install Rust
-curl --proto '=https' --tlsv2.2 -sSf https://sh.rustup.rs | sh
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 # Install Nightly -- required for SGX below
 rustup toolchain install nightly
